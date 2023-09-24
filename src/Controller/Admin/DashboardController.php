@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\RouteStation;
+use App\Entity\Schedule;
 use App\Entity\Station;
 use App\Entity\City;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -50,6 +52,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Cities', 'fas fa-list', City::class);
         yield MenuItem::linkToCrud('Stations', 'fas fa-list', Station::class);
         yield MenuItem::linkToCrud('Routes', 'fas fa-list', \App\Entity\Route::class);
-//        yield MenuItem::linkToCrud('Routes (Price)', 'fas fa-list', TicketPrice::class);
+        yield MenuItem::linkToCrud('Route Stations', 'fas fa-list', RouteStation::class)
+            ->setController(RouteStationCrudController::class);
+        yield MenuItem::linkToCrud('Schedule Route Stations', 'far fa-question-circle', RouteStation::class)
+            ->setController(ScheduleRouteStationCrudController::class);
     }
 }

@@ -25,6 +25,18 @@ class Station
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
 
+    #[ORM\OneToMany(mappedBy: 'station', targetEntity: RouteStation::class)]
+    private Collection $routeStations;
+
+    #[ORM\OneToMany(mappedBy: 'station', targetEntity: DepartureTime::class, orphanRemoval: true)]
+    private Collection $departureTimes;
+
+    public function __construct()
+    {
+        $this->routeStations = new ArrayCollection();
+        $this->departureTimes = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,5 +76,70 @@ class Station
         $this->city = $city;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, RouteStation>
+     */
+    public function getRouteStations(): Collection
+    {
+        return $this->routeStations;
+    }
+
+    public function addRouteStation(RouteStation $routeStation): static
+    {
+        if (!$this->routeStations->contains($routeStation)) {
+            $this->routeStations->add($routeStation);
+            $routeStation->setStation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRouteStation(RouteStation $routeStation): static
+    {
+        if ($this->routeStations->removeElement($routeStation)) {
+            // set the owning side to null (unless already changed)
+            if ($routeStation->getStation() === $this) {
+                $routeStation->setStation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DepartureTime>
+     */
+    public function getDepartureTimes(): Collection
+    {
+        return $this->departureTimes;
+    }
+
+    public function addDepartureTime(DepartureTime $departureTime): static
+    {
+        if (!$this->departureTimes->contains($departureTime)) {
+            $this->departureTimes->add($departureTime);
+            $departureTime->setStation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDepartureTime(DepartureTime $departureTime): static
+    {
+        if ($this->departureTimes->removeElement($departureTime)) {
+            // set the owning side to null (unless already changed)
+            if ($departureTime->getStation() === $this) {
+                $departureTime->setStation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->city . ' - ' . $this->name;
     }
 }
